@@ -1,13 +1,14 @@
-﻿
-@page
+﻿@page
 @model FlotaGlobal.Pages.VehiculosModel
 @{
     ViewData["Title"] = "Listado de Vehículos";
 }
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-middle mb-4">
-        <h2>📋 Control de Flota - Vehículos Registrados</h2>
+    <!-- CAMBIO 1: Encabezado modificado para incluir el título y el botón de registro alineados -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2> Control de Flota - Vehículos Registrados</h2>
+        <a asp-page="/VehiculosCrear" class="btn btn-success">+ Registrar vehículo</a>
     </div>
 
     @if (Model.Vehiculos == null || !Model.Vehiculos.Any())
@@ -40,7 +41,8 @@
                                     <td>@vehiculo.Modelo</td>
                                     <td>@vehiculo.Anio</td>
                                     <td class="text-center">
-                                        <span class="badge bg-success px-3 py-2">Activo</span>
+                                        <!-- CAMBIO 2: Línea del badge dinámica según el estado real de la base de datos -->
+                                        <span class="badge @ClaseEstado(vehiculo.Estado) px-3 py-2">@TextoEstado(vehiculo.Estado)</span>
                                     </td>
                                 </tr>
                             }
@@ -51,3 +53,24 @@
         </div>
     }
 </div>
+
+@functions {
+    string ClaseEstado(string? estado) => estado?.Trim().ToUpper() switch
+    {
+        "A" => "bg-success text-white",
+        "DISPONIBLE" => "bg-success text-white",
+        "M" => "bg-warning text-dark",
+        "EN_MANTENIMIENTO" => "bg-warning text-dark",
+        "INACTIVO" => "bg-danger text-white",
+        "'INACTIVO'" => "bg-danger text-white",
+        _ => "bg-secondary text-white"
+    };
+
+    string TextoEstado(string? estado) => (estado?.Trim().ToUpper()) switch
+    {
+        "A" => "Activo",
+        "M" => "Mantenimiento",
+        _ => (estado ?? "sin estado").Replace("_", " ").Replace("'", "")
+    };
+}
+
