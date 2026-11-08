@@ -5,7 +5,15 @@
 }
 
 <div class="container mt-4">
-    <!-- CAMBIO 1: Encabezado modificado para incluir el título y el botón de registro alineados -->
+    <!-- Alerta verde de éxito al guardar o cambiar estado -->
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            🔹 @Model.Mensaje
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2> Control de Flota - Vehículos Registrados</h2>
         <a asp-page="/VehiculosCrear" class="btn btn-success">+ Registrar vehículo</a>
@@ -30,6 +38,7 @@
                                 <th>Modelo</th>
                                 <th>Año</th>
                                 <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -41,8 +50,11 @@
                                     <td>@vehiculo.Modelo</td>
                                     <td>@vehiculo.Anio</td>
                                     <td class="text-center">
-                                        <!-- CAMBIO 2: Línea del badge dinámica según el estado real de la base de datos -->
                                         <span class="badge @ClaseEstado(vehiculo.Estado) px-3 py-2">@TextoEstado(vehiculo.Estado)</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <!-- Botón de edición que envía el ID del vehículo -->
+                                        <a asp-page="/VehiculosEditar" asp-route-id="@vehiculo.IdVehiculo" class="btn btn-sm btn-outline-primary fw-bold px-3">Editar</a>
                                     </td>
                                 </tr>
                             }
@@ -62,7 +74,6 @@
         "M" => "bg-warning text-dark",
         "EN_MANTENIMIENTO" => "bg-warning text-dark",
         "INACTIVO" => "bg-danger text-white",
-        "'INACTIVO'" => "bg-danger text-white",
         _ => "bg-secondary text-white"
     };
 
