@@ -2,6 +2,7 @@ using FlotaGlobal.Data;
 using FlotaGlobal.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlotaGlobal.Pages
@@ -16,37 +17,38 @@ namespace FlotaGlobal.Pages
         }
 
         [BindProperty]
-        public Vehiculos Vehiculo { get; set; } = new Vehiculos { Estado = "disponible" };
+        public Vehiculos Vehiculo { get; set; } = default!;
+
+        [TempData]
+        public string? Mensaje { get; set; }
 
         public void OnGet()
         {
+            // Inicializamos el objeto para evitar nulos en la vista
+            Vehiculo = new Vehiculos();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            // Remover la validación de NumeroInterno ya que no existe en el modelo de base de datos
+            ModelState.Remove("Vehiculo.NumeroInterno");
 
-            if (await _context.Vehiculos.AnyAsync(v => v.Placa == Vehiculo.Placa))
-            {
-                ModelState.AddModelError("Vehiculo.Placa", "Ya existe un vehículo con esa placa.");
-                return Page();
-            }
-
-            _context.Vehiculos.Add(Vehiculo);
+            if (!ModelState.IsValid) return Page();
 
             try
             {
-                await _context.SaveChangesAsync();
+                // Llamamos a tu procedimiento almacenado ProVehiculosInsertar con los parámetros reales
+                await _context.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC dbo.ProVehiculosInsertar @Placa = {Vehiculo.Placa}, @Marca = {Vehiculo.Marca}, @Modelo = {Vehiculo.Modelo}, @Anio = {Vehiculo.Anio}, @Capacidad = {Vehiculo.Capacidad}, @Estado = {Vehiculo.Estado}");
             }
-            catch (DbUpdateException)
+            catch (SqlException ex)
             {
-                ModelState.AddModelError(string.Empty, "No se pudo guardar. Revisa los datos, por ejemplo que el número interno no esté repetido.");
+                // Captura errores como claves duplicadas (Placa ya registrada) desde la BD
+                ModelState.AddModelError(string.Empty, ex.Message);
                 return Page();
             }
 
+            Mensaje = $"El vehículo con placa {Vehiculo.Placa} fue registrado exitosamente.";
             return RedirectToPage("/Vehiculos");
         }
     }
