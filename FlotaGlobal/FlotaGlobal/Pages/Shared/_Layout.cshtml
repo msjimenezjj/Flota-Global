@@ -18,9 +18,9 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- CONTENEDOR CORREGIDO CON MENÚS ALINEADOS -->
+                <!-- CONTENEDOR MENÚS ALINEADOS -->
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <!-- Menú Izquierdo -->
+                    <!-- Menú Izquierdo: Todos los li van dentro de este ul -->
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
@@ -30,6 +30,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Vehiculos">Vehículos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Conductores">Conductores</a>
                         </li>
                     </ul>
 
@@ -75,4 +78,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
