@@ -1,0 +1,65 @@
+﻿@page "{id:int}"
+@model FlotaGlobal.Pages.VehiculosEditarModel
+@{
+    ViewData["Title"] = "Editar Vehículo";
+}
+
+<div class="container mt-4" style="max-width: 640px;">
+    <h2 class="mb-4">📋 Editar Vehículo - Placa @Model.Vehiculo.Placa</h2>
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm"></div>
+
+    <form method="post" class="card shadow-sm p-4 bg-white mb-4">
+        <input type="hidden" asp-for="Vehiculo.IdVehiculo" />
+        <input type="hidden" asp-for="Vehiculo.Estado" />
+
+        <div class="mb-3">
+            <label asp-for="Vehiculo.Placa" class="form-label fw-bold">Placa (Solo lectura)</label>
+            <input asp-for="Vehiculo.Placa" class="form-control bg-light" readonly />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Vehiculo.Marca" class="form-label fw-bold">Marca</label>
+            <input asp-for="Vehiculo.Marca" class="form-control" />
+            <span asp-validation-for="Vehiculo.Marca" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Vehiculo.Modelo" class="form-label fw-bold">Modelo</label>
+            <input asp-for="Vehiculo.Modelo" class="form-control" />
+            <span asp-validation-for="Vehiculo.Modelo" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Vehiculo.Anio" class="form-label fw-bold">Año</label>
+                <input asp-for="Vehiculo.Anio" class="form-control" />
+                <span asp-validation-for="Vehiculo.Anio" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Vehiculo.Capacidad" class="form-label fw-bold">Capacidad (Pasajeros)</label>
+                <input asp-for="Vehiculo.Capacidad" class="form-control" />
+                <span asp-validation-for="Vehiculo.Capacidad" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end mt-2">
+            <a asp-page="/Vehiculos" class="btn btn-outline-secondary px-4">Cancelar</a>
+            <button type="submit" class="btn btn-success px-4">Guardar cambios</button>
+        </div>
+    </form>
+
+    <div class="card shadow-sm p-4 bg-white">
+        <h5 class="mb-3 text-warning fw-bold">⚙️ Cambiar Estado Operativo</h5>
+        <form method="post" asp-page-handler="Estado" class="d-flex gap-2">
+            <input type="hidden" name="id" value="@Model.Vehiculo.IdVehiculo" />
+            <select name="nuevoEstado" class="form-select">
+                <option value="A" selected="@(Model.Vehiculo.Estado == "A" || Model.Vehiculo.Estado == "DISPONIBLE")">Activo / Disponible</option>
+                <option value="M" selected="@(Model.Vehiculo.Estado == "M" || Model.Vehiculo.Estado == "EN_MANTENIMIENTO")">En Mantenimiento</option>
+                <option value="INACTIVO" selected="@(Model.Vehiculo.Estado == "INACTIVO")">Inactivo</option>
+            </select>
+            <button type="submit" class="btn btn-warning fw-bold px-4">Cambiar</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

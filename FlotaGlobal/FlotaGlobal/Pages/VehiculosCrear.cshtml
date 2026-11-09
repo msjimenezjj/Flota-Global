@@ -4,57 +4,83 @@
     ViewData["Title"] = "Registrar vehículo";
 }
 
-<div class="container mt-4" style="max-width: 640px;">
-    <h2 class="mb-4">Registrar vehículo</h2>
+<!-- BLOQUE DE ESTILOS CON RUTA LOCAL COMPLETAMENTE GARANTIZADA -->
+<style>
+    body {
+        /* Capa oscura transparente para mantener la lectura + tu imagen local guardada en wwwroot */
+        background: linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.82)), url('/images/fondo-flota.jpg') no-repeat center center fixed;
+        background-size: cover;
+    }
 
-    <form method="post">
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    /* Formulario blanco elegante con un toque moderno translúcido */
+    .card-empresarial {
+        background-color: rgba(255, 255, 255, 0.96) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+    }
+
+    /* Sombra para resaltar el texto blanco del título principal */
+    .text-blanco-sombra {
+        color: #ffffff;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+    }
+</style>
+
+
+<div class="container mt-5 mb-5" style="max-width: 640px;">
+    <!-- Título principal -->
+    <h2 class="mb-4 text-blanco-sombra text-center fw-bold">🚛 Registrar Nuevo Vehículo</h2>
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm"></div>
+
+    <!-- Formulario de Registro -->
+    <form method="post" class="card card-empresarial shadow-lg p-4 mb-5">
+        <div class="mb-3">
+            <label asp-for="Vehiculo.Placa" class="form-label fw-bold text-dark">Placa</label>
+            <input asp-for="Vehiculo.Placa" class="form-control border-secondary" placeholder="Ej: ABC123" />
+            <span asp-validation-for="Vehiculo.Placa" class="text-danger small"></span>
+        </div>
 
         <div class="mb-3">
-            <label asp-for="Vehiculo.Placa" class="form-label">Placa</label>
-            <input asp-for="Vehiculo.Placa" class="form-control" />
-            <span asp-validation-for="Vehiculo.Placa" class="text-danger"></span>
+            <label asp-for="Vehiculo.Marca" class="form-label fw-bold text-dark">Marca</label>
+            <input asp-for="Vehiculo.Marca" class="form-control border-secondary" placeholder="Ej: Volvo, Chevrolet" />
+            <span asp-validation-for="Vehiculo.Marca" class="text-danger small"></span>
         </div>
+
         <div class="mb-3">
-            <label asp-for="Vehiculo.NumeroInterno" class="form-label">Número interno</label>
-            <input asp-for="Vehiculo.NumeroInterno" class="form-control" />
-            <span asp-validation-for="Vehiculo.NumeroInterno" class="text-danger"></span>
+            <label asp-for="Vehiculo.Modelo" class="form-label fw-bold text-dark">Modelo</label>
+            <input asp-for="Vehiculo.Modelo" class="form-control border-secondary" placeholder="Ej: NKR, Busscar" />
+            <span asp-validation-for="Vehiculo.Modelo" class="text-danger small"></span>
         </div>
-        <div class="mb-3">
-            <label asp-for="Vehiculo.Marca" class="form-label">Marca</label>
-            <input asp-for="Vehiculo.Marca" class="form-control" />
-            <span asp-validation-for="Vehiculo.Marca" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Vehiculo.Modelo" class="form-label">Modelo</label>
-            <input asp-for="Vehiculo.Modelo" class="form-control" />
-            <span asp-validation-for="Vehiculo.Modelo" class="text-danger"></span>
-        </div>
+
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label asp-for="Vehiculo.Anio" class="form-label">Año</label>
-                <input asp-for="Vehiculo.Anio" class="form-control" />
-                <span asp-validation-for="Vehiculo.Anio" class="text-danger"></span>
+                <label asp-for="Vehiculo.Anio" class="form-label fw-bold text-dark">Año</label>
+                <input asp-for="Vehiculo.Anio" class="form-control border-secondary" placeholder="Ej: 2024" />
+                <span asp-validation-for="Vehiculo.Anio" class="text-danger small"></span>
             </div>
             <div class="col-md-6 mb-3">
-                <label asp-for="Vehiculo.Capacidad" class="form-label">Capacidad (pasajeros)</label>
-                <input asp-for="Vehiculo.Capacidad" class="form-control" />
-                <span asp-validation-for="Vehiculo.Capacidad" class="text-danger"></span>
+                <label asp-for="Vehiculo.Capacidad" class="form-label fw-bold text-dark">Capacidad (Pasajeros)</label>
+                <input asp-for="Vehiculo.Capacidad" class="form-control border-secondary" placeholder="Ej: 40" />
+                <span asp-validation-for="Vehiculo.Capacidad" class="text-danger small"></span>
             </div>
         </div>
+
         <div class="mb-4">
-            <label asp-for="Vehiculo.Estado" class="form-label">Estado</label>
-            <select asp-for="Vehiculo.Estado" class="form-select">
-                <option value="disponible">Disponible</option>
-                <option value="en_operacion">En operación</option>
-                <option value="en_mantenimiento">En mantenimiento</option>
-                <option value="fuera_de_servicio">Fuera de servicio</option>
-                <option value="inactivo">Inactivo</option>
+            <label asp-for="Vehiculo.Estado" class="form-label fw-bold text-dark">Estado Operativo</label>
+            <select asp-for="Vehiculo.Estado" class="form-select border-secondary">
+                <option value="A">Activo / Disponible</option>
+                <option value="M">En Mantenimiento</option>
+                <option value="INACTIVO">Inactivo</option>
             </select>
+            <span asp-validation-for="Vehiculo.Estado" class="text-danger small"></span>
         </div>
 
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a asp-page="/Vehiculos" class="btn btn-outline-secondary">Cancelar</a>
+        <div class="d-flex gap-2 justify-content-end mt-2">
+            <a asp-page="/Vehiculos" class="btn btn-outline-danger px-4 fw-bold">Cancelar</a>
+            <button type="submit" class="btn btn-primary px-4 fw-bold shadow">Guardar vehículo</button>
+        </div>
     </form>
 </div>
 

@@ -17,7 +17,10 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                <!-- CONTENEDOR MENÚS ALINEADOS -->
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <!-- Menú Izquierdo: Todos los li van dentro de este ul -->
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
@@ -28,8 +31,31 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Vehiculos">Vehículos</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Conductores">Conductores</a>
+                        </li>
+                    </ul>
+
+                    <!-- Menú Derecho: Bloque dinámico de Autenticación -->
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item me-3">
+                                <span class="text-primary fw-bold">👋 Hola, @User.Identity.Name</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-sm btn-outline-danger fw-bold px-3" asp-page="/Logout">Cerrar Sesión</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-sm btn-primary fw-bold px-3" asp-page="/Login">Iniciar Sesión</a>
+                            </li>
+                        }
                     </ul>
                 </div>
+
             </div>
         </nav>
     </header>
