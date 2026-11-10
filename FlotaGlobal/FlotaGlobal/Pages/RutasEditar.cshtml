@@ -1,0 +1,44 @@
+﻿@page "{id:int}"
+@model FlotaGlobal.Pages.RutasEditarModel
+@{
+    ViewData["Title"] = "Editar ruta";
+}
+
+<div class="container mt-4" style="max-width: 640px;">
+    <h2 class="mb-4">Editar ruta</h2>
+
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <input type="hidden" asp-for="Ruta.IdRuta" />
+
+        <div class="mb-3">
+            <label asp-for="Ruta.Origen" class="form-label">Origen</label>
+            <input asp-for="Ruta.Origen" class="form-control" />
+            <span asp-validation-for="Ruta.Origen" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Ruta.Destino" class="form-label">Destino</label>
+            <input asp-for="Ruta.Destino" class="form-control" />
+            <span asp-validation-for="Ruta.Destino" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Ruta.Recorrido" class="form-label">Recorrido (opcional)</label>
+            <textarea asp-for="Ruta.Recorrido" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Ruta.Recorrido" class="text-danger"></span>
+        </div>
+        <div class="mb-4">
+            <label asp-for="Ruta.Estado" class="form-label">Estado</label>
+            <select asp-for="Ruta.Estado" class="form-select">
+                <option value="A">Activa</option>
+                <option value="I">Inactiva</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a asp-page="/Rutas" class="btn btn-outline-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

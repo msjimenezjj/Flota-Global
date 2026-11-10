@@ -1,0 +1,70 @@
+﻿@page
+@model FlotaGlobal.Pages.RutasModel
+@{
+    ViewData["Title"] = "Rutas";
+}
+@functions {
+    string ClaseEstado(string? estado) => estado == "A" ? "bg-success" : "bg-secondary";
+    string TextoEstado(string? estado) => estado == "A" ? "Activa" : "Inactiva";
+}
+
+<div class="container mt-4">
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert-success">@Model.Mensaje</div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Rutas</h2>
+        <a asp-page="/RutasCrear" class="btn btn-success">+ Registrar ruta</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-5">
+            <input name="Buscar" value="@Model.Buscar" class="form-control" placeholder="Buscar por origen o destino" />
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a asp-page="/Rutas" class="btn btn-outline-secondary">Limpiar</a>
+        </div>
+    </form>
+
+    @if (!Model.Rutas.Any())
+    {
+        <div class="alert alert-warning">No se encontraron rutas.</div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover m-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-3">Origen</th>
+                            <th>Destino</th>
+                            <th>Recorrido</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ruta in Model.Rutas)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-bold">@ruta.Origen</td>
+                                <td>@ruta.Destino</td>
+                                <td>@ruta.Recorrido</td>
+                                <td class="text-center">
+                                    <span class="badge @ClaseEstado(ruta.Estado) px-3 py-2">@TextoEstado(ruta.Estado)</span>
+                                </td>
+                                <td class="text-center">
+                                    <a asp-page="/RutasEditar" asp-route-id="@ruta.IdRuta" class="btn btn-sm btn-outline-primary">Editar</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
