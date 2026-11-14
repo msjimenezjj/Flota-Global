@@ -1,10 +1,91 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .hero-flota {
+        background: linear-gradient(rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.85)), url('/images/fondo-flota.jpg') no-repeat center center;
+        background-size: cover;
+        border-radius: 16px;
+        color: white;
+        padding: 4.5rem 2rem;
+    }
+
+    .card-modulo {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .card-modulo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12) !important;
+        }
+</style>
+
+<div class="container mt-3">
+    <!-- Banner Principal con la Imagen de tu Flota -->
+    <div class="hero-flota shadow-lg text-center mb-5">
+        <span class="badge bg-primary px-3 py-2 mb-3 text-uppercase fw-bold">Plataforma Integral de Transporte</span>
+        <h1 class="display-4 fw-bold mb-3">🚛 Bienvenido a FlotaGlobal</h1>
+        <p class="lead mx-auto mb-4 text-light" style="max-width: 680px;">
+            Control centralizado de vehículos, gestión operativa de conductores y monitoreo de rutas en tiempo real.
+        </p>
+
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a asp-page="/Vehiculos" class="btn btn-primary btn-lg px-4 fw-bold shadow">Ver Flota Vehicular</a>
+                <a asp-page="/Conductores" class="btn btn-outline-light btn-lg px-4 fw-bold">Gestionar Conductores</a>
+            </div>
+        }
+        else
+        {
+            <a asp-page="/Login" class="btn btn-primary btn-lg px-5 fw-bold shadow">Iniciar Sesión en el Sistema</a>
+        }
+    </div>
+
+    <!-- Tarjetas de Accesos Rápidos -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card card-modulo shadow-sm h-100 p-3">
+                <div class="card-body">
+                    <div class="fs-1 mb-2">🚌</div>
+                    <h5 class="card-title fw-bold">Control de Vehículos</h5>
+                    <p class="card-text text-muted small">
+                        Consulta el inventario de buses y camiones, actualiza especificaciones técnicas y supervisa su estado operativo.
+                    </p>
+                    <a asp-page="/Vehiculos" class="btn btn-sm btn-outline-primary fw-bold mt-2">Ir a Vehículos →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-modulo shadow-sm h-100 p-3">
+                <div class="card-body">
+                    <div class="fs-1 mb-2">👨‍✈️</div>
+                    <h5 class="card-title fw-bold">Gestión de Conductores</h5>
+                    <p class="card-text text-muted small">
+                        Administra los perfiles del personal operativo, licencias de conducción, fechas de vencimiento y disponibilidad.
+                    </p>
+                    <a asp-page="/Conductores" class="btn btn-sm btn-outline-success fw-bold mt-2">Ir a Conductores →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-modulo shadow-sm h-100 p-3">
+                <div class="card-body">
+                    <div class="fs-1 mb-2">🗺️</div>
+                    <h5 class="card-title fw-bold">Rutas y Operación</h5>
+                    <p class="card-text text-muted small">
+                        Visualiza los trayectos asignados, destinos activos y la programación diaria de toda la flota empresarial.
+                    </p>
+                    <a asp-page="/Rutas" class="btn btn-sm btn-outline-dark fw-bold mt-2">Ir a Rutas →</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

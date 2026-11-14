@@ -1,0 +1,85 @@
+﻿@page "{id:int}"
+@model FlotaGlobal.Pages.ConductoresEditarModel
+@{
+    ViewData["Title"] = "Editar Conductor";
+}
+
+<div class="container mt-4" style="max-width: 720px;">
+    <h2 class="mb-4">📋 Editar Información del Conductor</h2>
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm"></div>
+
+    <form method="post" class="card shadow-sm p-4 bg-white mb-5">
+        <input type="hidden" asp-for="Conductor.IdConductor" />
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Conductor.Documento" class="form-label fw-bold">Documento de Identidad</label>
+                <input asp-for="Conductor.Documento" class="form-control bg-light" readonly />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Conductor.Telefono" class="form-label fw-bold">Teléfono de Contacto</label>
+                <input asp-for="Conductor.Telefono" class="form-control" />
+                <span asp-validation-for="Conductor.Telefono" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Conductor.PrimerNombre" class="form-label fw-bold">Primer Nombre</label>
+                <input asp-for="Conductor.PrimerNombre" class="form-control" required />
+                <span asp-validation-for="Conductor.PrimerNombre" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Conductor.SegundoNombre" class="form-label fw-bold">Segundo Nombre</label>
+                <input asp-for="Conductor.SegundoNombre" class="form-control" />
+                <span asp-validation-for="Conductor.SegundoNombre" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Conductor.PrimerApellido" class="form-label fw-bold">Primer Apellido</label>
+                <input asp-for="Conductor.PrimerApellido" class="form-control" required />
+                <span asp-validation-for="Conductor.PrimerApellido" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Conductor.SegundoApellido" class="form-label fw-bold">Segundo Apellido</label>
+                <input asp-for="Conductor.SegundoApellido" class="form-control" />
+                <span asp-validation-for="Conductor.SegundoApellido" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Conductor.Licencia" class="form-label fw-bold">Número de Licencia</label>
+                <input asp-for="Conductor.Licencia" class="form-control" required />
+                <span asp-validation-for="Conductor.Licencia" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Conductor.FechaVencimientoLicencia" class="form-label fw-bold">Vencimiento de Licencia</label>
+                <input asp-for="Conductor.FechaVencimientoLicencia" type="date" class="form-control" required />
+                <span asp-validation-for="Conductor.FechaVencimientoLicencia" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Conductor.Estado" class="form-label fw-bold">Estado Operativo</label>
+            <select asp-for="Conductor.Estado" class="form-select">
+                <option value="A" selected="@(Model.Conductor.Estado == "A")">Activo / Disponible</option>
+                <option value="M" selected="@(Model.Conductor.Estado == "M")">Suspendido / En Revisión</option>
+                <option value="I" selected="@(Model.Conductor.Estado == "I")">Inactivo</option>
+            </select>
+            <span asp-validation-for="Conductor.Estado" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end">
+            <a asp-page="/Conductores" class="btn btn-outline-secondary px-4">Cancelar</a>
+            <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">Guardar Cambios</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

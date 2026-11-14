@@ -1,0 +1,147 @@
+﻿@page
+@model FlotaGlobal.Pages.ProgramacionModel
+@{
+    ViewData["Title"] = "Programación — Turnos y Despachos";
+}
+
+<div class="container-fluid px-4 mt-4">
+    <!-- Encabezado estilo Figma -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <h3 class="fw-bold m-0">📅 Programación — Turnos y Despachos</h3>
+        <span class="text-muted small fw-bold">Gestión Operativa de Flota</span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.MensajeExito))
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            ✅ @Model.MensajeExito
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- COLUMNA IZQUIERDA: Tabla de Turnos Programados -->
+        <div class="@(User.IsInRole("1") || User.IsInRole("2") ? "col-lg-8" : "col-12")">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <span class="badge bg-dark px-3 py-2">Vista Tabla</span>
+                    <span class="text-muted small fw-bold">Total turnos registrados: @Model.TurnosProgramados.Count</span>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.TurnosProgramados.Any())
+                    {
+                        <div class="p-4 text-center text-muted">
+                            No hay turnos de despacho programados actualmente.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle m-0">
+                                <thead class="table-light text-muted small">
+                                    <tr>
+                                        <th class="ps-3">Horario</th>
+                                        <th>Ruta</th>
+                                        <th>Vehículo</th>
+                                        <th>Conductor</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.TurnosProgramados)
+                                    {
+                                        <tr>
+                                            <td class="ps-3 fw-bold text-dark">@item.Horario</td>
+                                            <td>@item.Ruta</td>
+                                            <td><span class="badge bg-light text-primary border fw-bold">@item.Vehiculo</span></td>
+                                            <td>@item.Conductor</td>
+                                            <td class="text-muted">@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: Formulario "Crear Turno de Despacho" (Solo Roles 1 y 2) -->
+        @if (User.IsInRole("1") || User.IsInRole("2"))
+        {
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 p-3 bg-white">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">Crear Turno de Despacho</h5>
+
+                        <!-- Alerta Roja estilo Figma cuando falla la validación del SP -->
+                        @if (!string.IsNullOrEmpty(Model.ErrorAsignacion))
+                        {
+                            <div class="alert alert-danger border-danger small p-3 mb-3" role="alert">
+                                <div class="fw-bold text-uppercase mb-1">⚠️ Error de Asignación</div>
+                                <div>@Model.ErrorAsignacion</div>
+                            </div>
+                        }
+
+                        <form method="post">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Ruta *</label>
+                                <select asp-for="IdRuta" class="form-select" required>
+                                    <option value="">Seleccione una Ruta</option>
+                                    @foreach (var r in Model.ListaRutas)
+                                    {
+                                        <option value="@r.IdRuta">@r.Origen - @r.Destino</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Vehículo *</label>
+                                <select asp-for="IdVehiculo" class="form-select" required>
+                                    <option value="">Seleccione un Vehículo</option>
+                                    @foreach (var v in Model.ListaVehiculos)
+                                    {
+                                        var enMantenimiento = v.Estado?.Trim().ToUpper() == "M" || v.Estado?.Trim().ToUpper() == "EN_MANTENIMIENTO";
+                                        <option value="@v.IdVehiculo">
+                                            @v.Placa (@v.Marca @v.Modelo) @(enMantenimiento ? "— [En Mantenimiento]" : "")
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Conductor *</label>
+                                <select asp-for="IdConductor" class="form-select" required>
+                                    <option value="">Seleccione un Conductor</option>
+                                    @foreach (var c in Model.ListaConductores)
+                                    {
+                                        <option value="@c.IdConductor">@c.PrimerNombre @c.PrimerApellido (@c.Documento)</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="row g-2 mb-4">
+                                <div class="col-12 mb-2">
+                                    <label class="form-label small fw-bold">Fecha *</label>
+                                    <input asp-for="Fecha" type="date" class="form-control" required />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold">Hora Inicio *</label>
+                                    <input asp-for="HoraInicio" type="time" class="form-control" required />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold">Hora Fin *</label>
+                                    <input asp-for="HoraFin" type="time" class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-dark fw-bold py-2">Guardar Turno</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
