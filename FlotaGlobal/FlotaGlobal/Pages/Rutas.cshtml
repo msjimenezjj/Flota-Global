@@ -16,7 +16,11 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Rutas</h2>
-        <a asp-page="/RutasCrear" class="btn btn-success">+ Registrar ruta</a>
+
+        @if (User.IsInRole("1") || User.IsInRole("2"))
+        {
+            <a asp-page="/RutasCrear" class="btn btn-success">+ Registrar ruta</a>
+        }
     </div>
 
     <form method="get" class="row g-2 mb-3">
@@ -57,8 +61,16 @@
                                 <td class="text-center">
                                     <span class="badge @ClaseEstado(ruta.Estado) px-3 py-2">@TextoEstado(ruta.Estado)</span>
                                 </td>
+
                                 <td class="text-center">
-                                    <a asp-page="/RutasEditar" asp-route-id="@ruta.IdRuta" class="btn btn-sm btn-outline-primary">Editar</a>
+                                    @if (User.IsInRole("1") || User.IsInRole("2"))
+                                    {
+                                        <a asp-page="/RutasEditar" asp-route-id="@ruta.IdRuta" class="btn btn-sm btn-outline-primary">Editar</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border">Solo lectura</span>
+                                    }
                                 </td>
                             </tr>
                         }

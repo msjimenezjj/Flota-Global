@@ -1,13 +1,16 @@
 using FlotaGlobal.Data;
 using FlotaGlobal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace FlotaGlobal.Pages
 {
-    public class RutasEditarModel : PageModel
+    [Authorize(Roles = "1,2")] // <-- 2. Agregar esta línea encima de "public class"
+        public class RutasEditarModel : PageModel
     {
         private readonly FlotaDbContext _context;
 
