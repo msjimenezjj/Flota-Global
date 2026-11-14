@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlotaGlobal.Pages
 {
+    [Authorize(Roles = "1,2")]
+
     public class ConductoresEditarModel : PageModel
     {
         private readonly FlotaDbContext _context;

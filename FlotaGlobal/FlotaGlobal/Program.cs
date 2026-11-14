@@ -4,14 +4,26 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. CONFIGURACIÓN DE SERVICIOS (Antes de Build) 
-builder.Services.AddRazorPages();
+// 1. CONFIGURACIÓN DE SERVICIOS Y PROTECCIÓN DE PÁGINAS
+builder.Services.AddRazorPages(options =>
+{
+    // Exige iniciar sesión en todas las páginas por defecto
+    options.Conventions.AuthorizeFolder("/");
 
-// Configuración de la Base de Datos (Entity Framework)
+    // Permite entrar sin sesión únicamente a estas pantallas públicas
+    options.Conventions.AllowAnonymousToPage("/Index");
+    options.Conventions.AllowAnonymousToPage("/Privacy");
+    options.Conventions.AllowAnonymousToPage("/Login");
+    options.Conventions.AllowAnonymousToPage("/Logout");       
+    options.Conventions.AllowAnonymousToPage("/AccessDenied");
+    options.Conventions.AllowAnonymousToPage("/ForgotPassword");
+});
+
+// Configuración de la Base de Datos
 builder.Services.AddDbContext<FlotaDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Flota")));
 
-// ?? CORRECCIÓN AQUÍ: Le decimos a ASP.NET Core que el esquema de login por defecto SON las Cookies
+// Configuración de Cookies de Autenticación
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -20,14 +32,13 @@ builder.Services.AddAuthentication(options =>
 })
 .AddCookie(options =>
 {
-    options.LoginPath = "/Login"; // Si intentan entrar a algo protegido, los manda para acá
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(20); // Duración del acceso
+    options.LoginPath = "/Login";
+    options.AccessDeniedPath = "/AccessDenied"; // Pantalla cuando un rol no tiene permiso
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 });
 
-// 2. CONSTRUCCIÓN DE LA APLICACIÓN
 var app = builder.Build();
 
-// 3. CONFIGURACIÓN DEL PIPELINE HTTP (Middlewares - Después de Build) 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -39,12 +50,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// El orden estricto de middlewares para la seguridad
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
 
 app.Run();
-
 

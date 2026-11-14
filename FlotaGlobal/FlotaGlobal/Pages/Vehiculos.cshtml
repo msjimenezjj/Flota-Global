@@ -16,7 +16,12 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2> Control de Flota - Vehículos Registrados</h2>
-        <a asp-page="/VehiculosCrear" class="btn btn-success">+ Registrar vehículo</a>
+
+        <!-- 1. AQUÍ SE OCULTA EL BOTÓN DE REGISTRAR PARA EL ROL 3 (AUXILIAR) -->
+        @if (User.IsInRole("1") || User.IsInRole("2"))
+        {
+            <a asp-page="/VehiculosCrear" class="btn btn-success">+ Registrar vehículo</a>
+        }
     </div>
 
     @if (Model.Vehiculos == null || !Model.Vehiculos.Any())
@@ -52,9 +57,17 @@
                                     <td class="text-center">
                                         <span class="badge @ClaseEstado(vehiculo.Estado) px-3 py-2">@TextoEstado(vehiculo.Estado)</span>
                                     </td>
+
+                                    <!-- 2. AQUÍ SE OCULTA EL BOTÓN DE EDITAR PARA EL ROL 3 (AUXILIAR) -->
                                     <td class="text-center">
-                                        <!-- Botón de edición que envía el ID del vehículo -->
-                                        <a asp-page="/VehiculosEditar" asp-route-id="@vehiculo.IdVehiculo" class="btn btn-sm btn-outline-primary fw-bold px-3">Editar</a>
+                                        @if (User.IsInRole("1") || User.IsInRole("2"))
+                                        {
+                                            <a asp-page="/VehiculosEditar" asp-route-id="@vehiculo.IdVehiculo" class="btn btn-sm btn-outline-primary fw-bold px-3">Editar</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-muted border">Solo lectura</span>
+                                        }
                                     </td>
                                 </tr>
                             }
@@ -84,4 +97,3 @@
         _ => (estado ?? "sin estado").Replace("_", " ").Replace("'", "")
     };
 }
-

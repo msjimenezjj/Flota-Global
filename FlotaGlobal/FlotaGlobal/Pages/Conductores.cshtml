@@ -16,8 +16,12 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>👥 Gestión de Personal - Conductores Registrados</h2>
-        <!-- Este botón redirigirá al formulario de registro real -->
-        <a asp-page="/ConductoresCrear" class="btn btn-success fw-bold">+ Registrar Conductor</a>
+
+        <!-- 1. OCULTAR BOTÓN REGISTRAR PARA EL ROL 3 (AUXILIAR) -->
+        @if (User.IsInRole("1") || User.IsInRole("2"))
+        {
+            <a asp-page="/ConductoresCrear" class="btn btn-success fw-bold">+ Registrar Conductor</a>
+        }
     </div>
 
     @if (Model.Conductores == null || !Model.Conductores.Any())
@@ -57,8 +61,17 @@
                                             @TextoEstado(conductor.Estado)
                                         </span>
                                     </td>
+
+                                    <!-- 2. OCULTAR BOTÓN EDITAR PARA EL ROL 3 (AUXILIAR) -->
                                     <td class="text-center">
-                                        <a asp-page="/ConductoresEditar" asp-route-id="@conductor.IdConductor" class="btn btn-sm btn-outline-primary fw-bold px-3">Editar</a>
+                                        @if (User.IsInRole("1") || User.IsInRole("2"))
+                                        {
+                                            <a asp-page="/ConductoresEditar" asp-route-id="@conductor.IdConductor" class="btn btn-sm btn-outline-primary fw-bold px-3">Editar</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-muted border">Solo lectura</span>
+                                        }
                                     </td>
                                 </tr>
                             }
