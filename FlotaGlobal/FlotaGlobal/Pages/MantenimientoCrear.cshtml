@@ -1,0 +1,73 @@
+﻿@page
+@model FlotaGlobal.Pages.MantenimientoCrearModel
+@{
+    ViewData["Title"] = "Registrar Mantenimiento";
+}
+
+<div class="container mt-4" style="max-width: 680px;">
+    <h2 class="mb-4 fw-bold">🔧 @(Model.Estado == "Programado" ? "Programar Taller Futuro" : "Registrar Mantenimiento Actual")</h2>
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm"></div>
+
+    <form method="post" class="card shadow-sm p-4 bg-white mb-5">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Vehículo *</label>
+            <select asp-for="IdVehiculo" class="form-select" required>
+                <option value="">Seleccione un vehículo...</option>
+                @foreach (var v in Model.ListaVehiculos)
+                {
+                    <option value="@v.IdVehiculo">@v.Placa — @v.Marca @v.Modelo</option>
+                }
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Tipo de Mantenimiento *</label>
+                <select asp-for="Tipo" class="form-select">
+                    <option value="Preventivo">Preventivo</option>
+                    <option value="Correctivo">Correctivo</option>
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Fecha *</label>
+                <input asp-for="Fecha" type="date" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Responsable / Taller *</label>
+            <input asp-for="Responsable" class="form-control" placeholder="Ej: Taller Mecánico Central, Servicio Autorizado Volvo" required />
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Kilometraje Actual *</label>
+                <input asp-for="Kilometraje" type="number" class="form-control" placeholder="Ej: 45000" required />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Costo Estimado / Final *</label>
+                <input asp-for="Costo" type="number" step="0.01" class="form-control" placeholder="Ej: 150000" required />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Descripción del Servicio</label>
+            <textarea asp-for="Descripcion" class="form-control" rows="2" placeholder="Detalle del trabajo realizado o repuestos..."></textarea>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Estado *</label>
+            <select asp-for="Estado" class="form-select">
+                <option value="En Progreso">En Progreso (En Taller)</option>
+                <option value="Programado">Programado (Futuro)</option>
+                <option value="Completado">Completado</option>
+            </select>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end">
+            <a asp-page="/Mantenimiento" class="btn btn-outline-secondary px-4">Cancelar</a>
+            <button type="submit" class="btn btn-dark px-4 fw-bold">Guardar Registro</button>
+        </div>
+    </form>
+</div>

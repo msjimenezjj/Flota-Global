@@ -1,0 +1,168 @@
+﻿@page
+@model FlotaGlobal.Pages.MantenimientoModel
+@{
+    ViewData["Title"] = "Gestión de Mantenimientos de Flota";
+}
+
+@functions {
+    string ClaseEstado(string? estado) => (estado?.Trim().ToLower()) switch
+    {
+        "completado" => "bg-success-subtle text-success border border-success",
+        "programado" => "bg-light text-dark border",
+        "en progreso" => "bg-warning-subtle text-dark border border-warning",
+        _ => "bg-secondary text-white"
+    };
+}
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <h3 class="fw-bold m-0">🔧 Gestión de Mantenimiento de Flota</h3>
+        <span class="text-muted small fw-bold">Historial Preventivo y Correctivo</span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            ✅ @Model.Mensaje
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- SECCIÓN SUPERIOR ESTILO FIGMA: Alertas a la izquierda, Botones a la derecha -->
+    <div class="row g-3 mb-4 align-items-stretch">
+        <div class="col-lg-8">
+            <div class="card border-danger-subtle bg-danger-subtle bg-opacity-10 h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="text-danger fw-bold small text-uppercase mb-2">
+                        ⚠️ Próximos Mantenimientos / Alertas
+                    </div>
+                    @if (!Model.AlertasProximos.Any())
+                    {
+                        <p class="text-muted small m-0">No hay mantenimientos programados o en taller pendientes.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-unstyled m-0 small">
+                            @foreach (var alerta in Model.AlertasProximos)
+                            {
+                                <li class="text-danger mb-1">
+                                    • <strong>@alerta.VehiculoTexto</strong> — @alerta.Tipo: @(string.IsNullOrEmpty(alerta.Descripcion) ? alerta.Responsable : alerta.Descripcion) (Fecha: @alerta.Fecha.ToString("dd/MM/yyyy") - <em>@alerta.Estado</em>)
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción (Solo Roles 1 y 2) -->
+        @if (User.IsInRole("1") || User.IsInRole("2"))
+        {
+            <div class="col-lg-4 d-flex flex-column justify-content-center gap-2">
+                <a asp-page="/MantenimientoCrear" asp-route-modo="actual" class="btn btn-dark fw-bold py-2 shadow-sm">
+                    Registrar Mantenimiento Actual
+                </a>
+                <a asp-page="/MantenimientoCrear" asp-route-modo="futuro" class="btn btn-outline-dark bg-white fw-bold py-2 shadow-sm">
+                    Programar Taller Futuro
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- FILTROS DE HISTORIAL POR VEHÍCULO Y TIPO -->
+    <form method="get" class="card shadow-sm border-0 p-3 mb-4 bg-white">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label small fw-bold text-muted">Filtrar historial por Vehículo</label>
+                <select name="FiltroVehiculo" class="form-select">
+                    <option value="">Todos los vehículos de la flota</option>
+                    @foreach (var v in Model.ListaVehiculos)
+                    {
+                        <option value="@v.IdVehiculo" selected="@(Model.FiltroVehiculo == v.IdVehiculo)">
+                            @v.Placa — @v.Marca @v.Modelo
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted">Tipo de Mantenimiento</label>
+                <select name="FiltroTipo" class="form-select">
+                    <option value="">Todos (Preventivo y Correctivo)</option>
+                    <option value="Preventivo" selected="@(Model.FiltroTipo == "Preventivo")">Preventivo</option>
+                    <option value="Correctivo" selected="@(Model.FiltroTipo == "Correctivo")">Correctivo</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary fw-bold flex-grow-1">Consultar Historial</button>
+                <a asp-page="/Mantenimiento" class="btn btn-outline-secondary">Limpiar</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- TABLA DE HISTORIAL DE MANTENIMIENTOS -->
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body p-0">
+            @if (!Model.Historial.Any())
+            {
+                <div class="p-4 text-center text-muted">
+                    No se encontraron registros de mantenimiento con los filtros seleccionados.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle m-0">
+                        <thead class="table-light text-muted small">
+                            <tr>
+                                <th class="ps-3">Vehículo</th>
+                                <th>Tipo</th>
+                                <th>Fecha</th>
+                                <th>Responsable / Taller</th>
+                                <th>Kilometraje</th>
+                                <th>Costo</th>
+                                <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Historial)
+                            {
+                                <tr>
+                                    <td class="ps-3 fw-bold text-dark">@item.VehiculoTexto</td>
+                                    <td>
+                                        <span class="badge @(item.Tipo == "Correctivo" ? "bg-danger-subtle text-danger" : "bg-info-subtle text-dark")">
+                                            @item.Tipo
+                                        </span>
+                                    </td>
+                                    <td class="text-muted">@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <div>@item.Responsable</div>
+                                        @if (!string.IsNullOrEmpty(item.Descripcion))
+                                        {
+                                            <small class="text-muted">@item.Descripcion</small>
+                                        }
+                                    </td>
+                                    <td>@item.Kilometraje.ToString("N0") km</td>
+                                    <td class="fw-bold">$@item.Costo.ToString("N2")</td>
+                                    <td class="text-center">
+                                        <span class="badge @ClaseEstado(item.Estado) px-3 py-2">@item.Estado</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (User.IsInRole("1") || User.IsInRole("2"))
+                                        {
+                                            <a asp-page="/MantenimientoEditar" asp-route-id="@item.IdMantenimientos" class="btn btn-sm btn-outline-secondary fw-bold px-3">Modificar</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-muted border">Solo lectura</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
