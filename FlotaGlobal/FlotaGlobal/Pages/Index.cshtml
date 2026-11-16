@@ -1,91 +1,226 @@
 ﻿@page
 @model IndexModel
+
 @{
-    ViewData["Title"] = "Inicio";
+    ViewData["Title"] = "Dashboard Principal";
 }
 
 <style>
     .hero-flota {
-        background: linear-gradient(rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.85)), url('/images/fondo-flota.jpg') no-repeat center center;
+        background: linear-gradient(rgba(15, 23, 42, 0.80), rgba(15, 23, 42, 0.88)),
+                    url('/images/fondo-flota.jpg') no-repeat center center;
         background-size: cover;
-        border-radius: 16px;
+        border-radius: 14px;
         color: white;
-        padding: 4.5rem 2rem;
     }
 
-    .card-modulo {
-        border: none;
+    .kpi-card {
+        border: 1px solid #e2e8f0;
         border-radius: 12px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background: #ffffff;
+        transition: transform 0.15s ease;
+    }
+    .kpi-card:hover {
+        transform: translateY(-3px);
     }
 
-        .card-modulo:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12) !important;
-        }
+    .alerta-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background-color: #f8fafc;
+        padding: 14px 16px;
+    }
+
+    .acceso-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .acceso-item:hover {
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
+        color: inherit;
+    }
 </style>
 
-<div class="container mt-3">
-    <!-- Banner Principal con la Imagen de tu Flota -->
-    <div class="hero-flota shadow-lg text-center mb-5">
-        <span class="badge bg-primary px-3 py-2 mb-3 text-uppercase fw-bold">Plataforma Integral de Transporte</span>
-        <h1 class="display-4 fw-bold mb-3">🚛 Bienvenido a FlotaGlobal</h1>
-        <p class="lead mx-auto mb-4 text-light" style="max-width: 680px;">
-            Control centralizado de vehículos, gestión operativa de conductores y monitoreo de rutas en tiempo real.
-        </p>
-
-        @if (User.Identity != null && User.Identity.IsAuthenticated)
-        {
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <a asp-page="/Vehiculos" class="btn btn-primary btn-lg px-4 fw-bold shadow">Ver Flota Vehicular</a>
-                <a asp-page="/Conductores" class="btn btn-outline-light btn-lg px-4 fw-bold">Gestionar Conductores</a>
+<div class="container-fluid px-4 mt-2">
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <div class="hero-flota p-4 mb-4 shadow-sm d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="badge bg-primary mb-2">SISTEMA DE GESTIÓN OPERATIVA</span>
+                <h2 class="fw-bold m-0">Dashboard Principal — FlotaGlobal</h2>
+                <p class="text-light small m-0 mt-1 opacity-75">Monitoreo en tiempo real de unidades, personal y alertas de mantenimiento.</p>
             </div>
-        }
-        else
-        {
+            <div class="d-flex gap-2">
+                <a asp-page="/Programacion" class="btn btn-primary fw-bold px-3 shadow-sm">📅 Ver Turnos</a>
+                <a asp-page="/Vehiculos" class="btn btn-outline-light fw-bold px-3">🚌 Flota</a>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="kpi-card p-3 shadow-sm h-100">
+                    <div class="text-muted small fw-bold text-uppercase mb-2">Vehículos Disponibles</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h2 class="fw-bold m-0 text-dark">@Model.VehiculosDisponibles</h2>
+                        <span class="badge bg-success-subtle text-success border border-success px-2 py-1">Disponibles</span>
+                    </div>
+                    <div class="text-muted small">Listos para asignación</div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="kpi-card p-3 shadow-sm h-100">
+                    <div class="text-muted small fw-bold text-uppercase mb-2">En Mantenimiento</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h2 class="fw-bold m-0 text-dark">@Model.VehiculosMantenimiento</h2>
+                        <span class="badge bg-warning-subtle text-dark border border-warning px-2 py-1">Taller</span>
+                    </div>
+                    <div class="text-muted small">Talleres autorizados</div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="kpi-card p-3 shadow-sm h-100">
+                    <div class="text-muted small fw-bold text-uppercase mb-2">En Operación</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h2 class="fw-bold m-0 text-dark">@Model.TurnosActivos</h2>
+                        <span class="badge bg-primary-subtle text-primary border border-primary px-2 py-1">En Ruta</span>
+                    </div>
+                    <div class="text-muted small">Rutas programadas activas</div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="kpi-card p-3 shadow-sm h-100">
+                    <div class="text-muted small fw-bold text-uppercase mb-2">Fuera de Servicio</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h2 class="fw-bold m-0 text-dark">@Model.VehiculosFueraServicio</h2>
+                        <span class="badge bg-danger-subtle text-danger border border-danger px-2 py-1">Inactivos</span>
+                    </div>
+                    <div class="text-muted small">Inactivos / baja temporal</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 p-3 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold m-0">🔔 Resumen de Alertas Recientes</h5>
+                            <span class="badge bg-light text-muted border">Tiempo Real</span>
+                        </div>
+
+                        @if (!Model.AlertasRecientes.Any())
+                        {
+                            <div class="alert alert-success border-0 small m-0">
+                                ✅ Todo está al día. No hay mantenimientos pendientes ni licencias próximas a vencer.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-column gap-3">
+                                @foreach (var alerta in Model.AlertasRecientes)
+                                {
+                                    <div class="alerta-item">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="badge @(alerta.Categoria == "MANTENIMIENTO" ? "bg-warning-subtle text-dark" : "bg-danger-subtle text-danger") small">
+                                                @alerta.Categoria
+                                            </span>
+                                            <span class="text-muted small">@alerta.Tiempo</span>
+                                        </div>
+                                        <div class="fw-bold text-dark">@alerta.Titulo</div>
+                                        <div class="text-muted small">@alerta.Detalle</div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 p-3 h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">Accesos Rápidos a Módulos</h5>
+                        <div class="d-flex flex-column gap-2">
+                            <a asp-page="/Vehiculos" class="acceso-item">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-4">🚌</span>
+                                    <div>
+                                        <div class="fw-bold small">Vehículos</div>
+                                        <div class="text-muted" style="font-size: 0.78rem;">Registrar y editar unidades</div>
+                                    </div>
+                                </div>
+                                <span class="text-muted">→</span>
+                            </a>
+
+                            <a asp-page="/Conductores" class="acceso-item">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-4">👨‍✈️</span>
+                                    <div>
+                                        <div class="fw-bold small">Conductores</div>
+                                        <div class="text-muted" style="font-size: 0.78rem;">Asignación y estado de licencias</div>
+                                    </div>
+                                </div>
+                                <span class="text-muted">→</span>
+                            </a>
+
+                            <a asp-page="/Programacion" class="acceso-item">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-4">📅</span>
+                                    <div>
+                                        <div class="fw-bold small">Programación</div>
+                                        <div class="text-muted" style="font-size: 0.78rem;">Asignar rutas y despachos</div>
+                                    </div>
+                                </div>
+                                <span class="text-muted">→</span>
+                            </a>
+
+                            <a asp-page="/Mantenimientos" class="acceso-item">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-4">🔧</span>
+                                    <div>
+                                        <div class="fw-bold small">Mantenimientos</div>
+                                        <div class="text-muted" style="font-size: 0.78rem;">Crear órdenes de trabajo</div>
+                                    </div>
+                                </div>
+                                <span class="text-muted">→</span>
+                            </a>
+
+                            <a asp-page="/CombustibleGastos" class="acceso-item">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-4">⛽</span>
+                                    <div>
+                                        <div class="fw-bold small">Combustible y Gastos</div>
+                                        <div class="text-muted" style="font-size: 0.78rem;">Registrar tanqueos y gastos</div>
+                                    </div>
+                                </div>
+                                <span class="text-muted">→</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+else
+{
+        <!-- BANNER CORPORATIVO CON IMAGEN DE FLOTA (Cuando NO hay sesión iniciada) -->
+        <div class="hero-flota shadow-lg text-center p-5 my-4" style="min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <span class="badge bg-primary px-3 py-2 mb-3 text-uppercase fw-bold">Plataforma Integral de Transporte</span>
+            <h1 class="display-4 fw-bold mb-3">🚛 Bienvenido a FlotaGlobal</h1>
+            <p class="lead mx-auto mb-4 text-light" style="max-width: 680px;">
+                Control centralizado de vehículos, gestión operativa de conductores, control de combustible y monitoreo de rutas en tiempo real.
+            </p>
             <a asp-page="/Login" class="btn btn-primary btn-lg px-5 fw-bold shadow">Iniciar Sesión en el Sistema</a>
-        }
-    </div>
-
-    <!-- Tarjetas de Accesos Rápidos -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card card-modulo shadow-sm h-100 p-3">
-                <div class="card-body">
-                    <div class="fs-1 mb-2">🚌</div>
-                    <h5 class="card-title fw-bold">Control de Vehículos</h5>
-                    <p class="card-text text-muted small">
-                        Consulta el inventario de buses y camiones, actualiza especificaciones técnicas y supervisa su estado operativo.
-                    </p>
-                    <a asp-page="/Vehiculos" class="btn btn-sm btn-outline-primary fw-bold mt-2">Ir a Vehículos →</a>
-                </div>
-            </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card card-modulo shadow-sm h-100 p-3">
-                <div class="card-body">
-                    <div class="fs-1 mb-2">👨‍✈️</div>
-                    <h5 class="card-title fw-bold">Gestión de Conductores</h5>
-                    <p class="card-text text-muted small">
-                        Administra los perfiles del personal operativo, licencias de conducción, fechas de vencimiento y disponibilidad.
-                    </p>
-                    <a asp-page="/Conductores" class="btn btn-sm btn-outline-success fw-bold mt-2">Ir a Conductores →</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card card-modulo shadow-sm h-100 p-3">
-                <div class="card-body">
-                    <div class="fs-1 mb-2">🗺️</div>
-                    <h5 class="card-title fw-bold">Rutas y Operación</h5>
-                    <p class="card-text text-muted small">
-                        Visualiza los trayectos asignados, destinos activos y la programación diaria de toda la flota empresarial.
-                    </p>
-                    <a asp-page="/Rutas" class="btn btn-sm btn-outline-dark fw-bold mt-2">Ir a Rutas →</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+}
