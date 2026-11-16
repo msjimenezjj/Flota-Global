@@ -1,4 +1,6 @@
-FROM ://microsoft.com AS build
+ARG M=mcr.microsoft
+ARG C=com
+FROM ${M}.${C}/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY ["FlotaGlobal/FlotaGlobal.csproj", "FlotaGlobal/"]
@@ -8,7 +10,9 @@ COPY . .
 WORKDIR "/src/FlotaGlobal"
 RUN dotnet publish "./FlotaGlobal.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM ://microsoft.com AS final
+ARG M
+ARG C
+FROM ${M}.${C}/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
