@@ -1,0 +1,54 @@
+﻿@page "{id:int}"
+@model FlotaGlobal.Pages.UsuariosEditarModel
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <h2 class="mb-4 fw-bold">✏️ Editar Usuario #@Model.IdUsuario</h2>
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm"></div>
+
+    <form method="post" class="card shadow-sm p-4 bg-white mb-5">
+        <input type="hidden" asp-for="IdUsuario" />
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Nombre Completo *</label>
+            <input asp-for="Nombre" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Correo Electrónico *</label>
+            <input asp-for="Correo" type="email" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Contraseña *</label>
+            <input asp-for="Contrasena" type="text" class="form-control" required />
+        </div>
+
+        <div class="row">
+            <div class="col-md-7 mb-4">
+                <label class="form-label fw-bold">Rol Asignado *</label>
+                <select asp-for="IdRol" class="form-select" required>
+                    @foreach (var r in Model.ListaRoles)
+                    {
+                        <option value="@r.IdRol">@r.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-5 mb-4">
+                <label class="form-label fw-bold">Estado *</label>
+                <select asp-for="Estado" class="form-select">
+                    <option value="A">Activo</option>
+                    <option value="I">Inactivo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end">
+            <a asp-page="/Usuarios" class="btn btn-outline-secondary px-4">Cancelar</a>
+            <button type="submit" class="btn btn-primary px-4 fw-bold">Guardar Cambios</button>
+        </div>
+    </form>
+</div>

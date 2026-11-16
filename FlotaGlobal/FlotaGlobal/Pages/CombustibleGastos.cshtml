@@ -1,0 +1,133 @@
+﻿@page
+@model FlotaGlobal.Pages.CombustibleGastosModel
+@{
+    ViewData["Title"] = "Control de Combustible y Gastos Operativos";
+}
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <h3 class="fw-bold m-0">⛽ Control de Combustible y Gastos Operativos</h3>
+        <span class="text-muted small fw-bold">Control Financiero de Flota</span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            ✅ @Model.Mensaje
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- BARRA SUPERIOR DE FILTROS Y BOTÓN DE REGISTRO (Estilo Figma) -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <form method="get" class="d-flex flex-wrap align-items-center gap-2">
+            <select name="FiltroVehiculo" class="form-select form-select-sm bg-white shadow-sm" style="width: auto;" onchange="this.form.submit()">
+                <option value="">Vehículo: Todos</option>
+                @foreach (var v in Model.ListaVehiculos)
+                {
+                    <option value="@v.IdVehiculo" selected="@(Model.FiltroVehiculo == v.IdVehiculo)">
+                        Vehículo: @v.Placa
+                    </option>
+                }
+            </select>
+
+            <input type="month" name="FiltroPeriodo" value="@Model.FiltroPeriodo" class="form-control form-control-sm bg-white shadow-sm" style="width: auto;" onchange="this.form.submit()" />
+
+            @if (Model.FiltroVehiculo.HasValue || !string.IsNullOrEmpty(Model.FiltroPeriodo))
+            {
+                <a asp-page="/CombustibleGastos" class="btn btn-sm btn-outline-secondary">Limpiar</a>
+            }
+        </form>
+
+        @if (User.IsInRole("1") || User.IsInRole("2"))
+        {
+            <a asp-page="/CombustibleGastosCrear" class="btn btn-dark fw-bold px-4 shadow-sm">
+                Registrar Nuevo Gasto
+            </a>
+        }
+    </div>
+
+    <!-- TABLA 1: CONTROL DE ABASTECIMIENTO DE COMBUSTIBLE -->
+    <h6 class="fw-bold text-dark mb-2">Control de Abastecimiento de Combustible</h6>
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body p-0">
+            @if (!Model.ListaCombustible.Any())
+            {
+                <div class="p-4 text-center text-muted small">
+                    No hay registros de abastecimiento de combustible para los filtros seleccionados.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle m-0">
+                        <thead class="table-light text-muted small">
+                            <tr>
+                                <th class="ps-3">Vehículo</th>
+                                <th>Fecha</th>
+                                <th>Cantidad (Gl)</th>
+                                <th>Costo Total</th>
+                                <th>Kilometraje Actual</th>
+                                <th>Método Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.ListaCombustible)
+                            {
+                                <tr>
+                                    <td class="ps-3 fw-bold text-dark">@c.Placa</td>
+                                    <td class="text-muted">@c.Fecha.ToString("dd/MM/yyyy")</td>
+                                    <td>@c.Cantidad.ToString("0.0") Gl</td>
+                                    <td class="fw-bold text-dark">$@c.Costo.ToString("N2")</td>
+                                    <td>@c.Kilometraje.ToString("N0") Km</td>
+                                    <td class="text-muted">@c.MetodoPago</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- TABLA 2: GASTOS OPERATIVOS ADICIONALES (PEAJES, TASAS, OTROS) -->
+    <h6 class="fw-bold text-dark mb-2">Gastos Operativos Adicionales (Peajes, Tasas, Otros)</h6>
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body p-0">
+            @if (!Model.ListaGastos.Any())
+            {
+                <div class="p-4 text-center text-muted small">
+                    No hay gastos operativos adicionales registrados.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle m-0">
+                        <thead class="table-light text-muted small">
+                            <tr>
+                                <th class="ps-3">Vehículo</th>
+                                <th>Tipo de Gasto</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var g in Model.ListaGastos)
+                            {
+                                <tr>
+                                    <td class="ps-3 fw-bold text-dark">@g.Placa</td>
+                                    <td>@g.Tipo</td>
+                                    <td class="fw-bold text-dark">$@g.Monto.ToString("N2")</td>
+                                    <td class="text-muted">@g.Fecha.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-muted">@g.Descripcion</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

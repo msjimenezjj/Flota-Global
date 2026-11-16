@@ -1,0 +1,105 @@
+﻿@page
+@model FlotaGlobal.Pages.CombustibleGastosCrearModel
+@{
+    ViewData["Title"] = "Registrar Nuevo Gasto";
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <h2 class="mb-4 fw-bold">⛽ Registrar Nuevo Gasto</h2>
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm"></div>
+
+    <form method="post" class="card shadow-sm p-4 bg-white mb-5">
+        <!-- Selector dinámico de Categoría -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Categoría del Registro *</label>
+            <select asp-for="Categoria" id="selectCategoria" class="form-select bg-light fw-bold" onchange="cambiarFormulario()">
+                <option value="Combustible">Abastecimiento de Combustible</option>
+                <option value="Operativo">Gasto Operativo Adicional (Peaje, Lavado, Seguro, etc.)</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Vehículo *</label>
+                <select asp-for="IdVehiculo" class="form-select" required>
+                    <option value="">Seleccione placa...</option>
+                    @foreach (var v in Model.ListaVehiculos)
+                    {
+                        <option value="@v.IdVehiculo">@v.Placa — @v.Marca @v.Modelo</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Fecha *</label>
+                <input asp-for="Fecha" type="date" class="form-control" required />
+            </div>
+        </div>
+
+        <!-- BLOQUE 1: CAMPOS DE COMBUSTIBLE -->
+        <div id="bloqueCombustible">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Cantidad (Galones) *</label>
+                    <input asp-for="Cantidad" type="number" step="0.01" class="form-control" placeholder="Ej: 25.0" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Costo Total ($) *</label>
+                    <input asp-for="Costo" type="number" step="0.01" class="form-control" placeholder="Ej: 112.50" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Kilometraje Actual *</label>
+                    <input asp-for="Kilometraje" type="number" class="form-control" placeholder="Ej: 142300" />
+                </div>
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold">Método de Pago *</label>
+                    <select asp-for="MetodoPago" class="form-select">
+                        <option value="Tarjeta Corporativa">Tarjeta Corporativa</option>
+                        <option value="Efectivo / Reembolso">Efectivo / Reembolso</option>
+                        <option value="Convenio Estación">Convenio Estación</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOQUE 2: CAMPOS DE GASTOS OPERATIVOS -->
+        <div id="bloqueOperativo" style="display: none;">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Tipo de Gasto *</label>
+                    <select asp-for="TipoGasto" class="form-select">
+                        <option value="Peaje">Peaje</option>
+                        <option value="Lavado / Limpieza">Lavado / Limpieza</option>
+                        <option value="Seguro Adicional">Seguro Adicional</option>
+                        <option value="Parqueadero">Parqueadero</option>
+                        <option value="Otros">Otros</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Monto ($) *</label>
+                    <input asp-for="Monto" type="number" step="0.01" class="form-control" placeholder="Ej: 15.00" />
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold">Descripción *</label>
+                <input asp-for="Descripcion" class="form-control" placeholder="Ej: Peaje Principal Salida Norte" />
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end">
+            <a asp-page="/CombustibleGastos" class="btn btn-outline-secondary px-4">Cancelar</a>
+            <button type="submit" class="btn btn-dark px-4 fw-bold">Guardar Registro</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function cambiarFormulario() {
+        var cat = document.getElementById("selectCategoria").value;
+        document.getElementById("bloqueCombustible").style.display = (cat === "Combustible") ? "block" : "none";
+        document.getElementById("bloqueOperativo").style.display = (cat === "Operativo") ? "block" : "none";
+    }
+    window.onload = cambiarFormulario;
+</script>

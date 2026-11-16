@@ -43,7 +43,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Mantenimientos">Mantenimientos</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/CombustibleGastos">Combustible y Gastos</a>
+                        </li>
+                        @if (User.IsInRole("1"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" asp-area="" asp-page="/Usuarios">Usuarios</a>
+                            </li>
+                        }
+
                     </ul>
+
 
                     <!-- Menú Derecho: Bloque dinámico de Autenticación -->
                     <ul class="navbar-nav ms-auto align-items-center">
